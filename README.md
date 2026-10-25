@@ -1,15 +1,30 @@
 # Greenwash
 
+[![Live Demo](https://img.shields.io/badge/Live_Domain-banxal.tech-cyan.svg)](https://banxal.tech)
+[![Demo Video](https://img.shields.io/badge/Demo_Video-YouTube-red.svg?logo=youtube)](https://youtu.be/Etl5xBcXUF0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](file:///Users/akul/Desktop/GreenWash/LICENSE)
 [![DigitalOcean App Platform](https://img.shields.io/badge/DigitalOcean-App_Platform_Ready-blue.svg?logo=digitalocean)](file:///Users/akul/Desktop/GreenWash/.do/app.yaml)
 [![Open-Weight AI: Gemma 2B](https://img.shields.io/badge/Open--Weight_AI-Gemma_2B%2F7B-purple.svg)](file:///Users/akul/Desktop/GreenWash/docs/open-source-ai.md)
 [![Agent Skill](https://img.shields.io/badge/Agent_Skill-greenwash-indigo.svg)](file:///Users/akul/Desktop/GreenWash/skills/greenwash/SKILL.md)
 [![Tests Passing](https://img.shields.io/badge/Tests-214_passed-success.svg)](file:///Users/akul/Desktop/GreenWash/packages/)
-[![Live Demo](https://img.shields.io/badge/Live_Domain-banxal.tech-cyan.svg)](https://banxal.tech)
+
+| 🌐 **Live Web Application** | 📺 **Demo Walkthrough Video** | 🌌 **Interactive Graphify Galaxy** |
+|:---:|:---:|:---:|
+| [**https://banxal.tech**](https://banxal.tech) | [**Watch on YouTube (youtu.be/Etl5xBcXUF0)**](https://youtu.be/Etl5xBcXUF0) | [**803-Node Knowledge Graph**](https://banxal.tech/graphify.html) |
 
 > **Greenwash catches when an AI coding agent makes tests green by weakening the tests instead of fixing the bug—and shows the exact diff and reproducible evidence.**
 
 Autonomous coding agents often "fix" failing builds by softening assertions (e.g. changing `expect(x).toBe(900)` to `expect(x).toBeGreaterThanOrEqual(0)`), deleting difficult test cases, or stubbing them with mocks. Greenwash pairs deterministic AST diff inspection with independently approved behavioral contracts, open-weight Gemma semantic review, and reproducible replays.
+
+---
+
+## 📺 Video Walkthrough Demo
+
+Watch the complete forensic walkthrough of GreenWash in action—demonstrating real-time detection of softened assertions, ground-truth behavioral contract replays, and interactive exploration of the 803-node Graphify knowledge constellation:
+
+[![Watch GreenWash Demo Video](https://img.youtube.com/vi/Etl5xBcXUF0/hqdefault.jpg)](https://youtu.be/Etl5xBcXUF0)
+
+▶️ **Click to watch on YouTube:** [https://youtu.be/Etl5xBcXUF0](https://youtu.be/Etl5xBcXUF0)
 
 ---
 
@@ -23,6 +38,7 @@ GreenWash fully satisfies all three criteria of the **DigitalOcean: Best Open-So
 4. **DigitalOcean 1-Click Deploy:** Ready for instantaneous deployment on DigitalOcean App Platform via [`.do/app.yaml`](file:///Users/akul/Desktop/GreenWash/.do/app.yaml) or single-droplet Docker Compose.
 
 [![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Akulbanxal/GreenWash)
+
 
 
 ---
