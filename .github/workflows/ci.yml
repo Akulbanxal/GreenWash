@@ -29,10 +29,10 @@ jobs:
           # Fetch full history to reliably compute base/head diff without extra authentication
           fetch-depth: 0
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
 
       - name: Install dependencies
@@ -67,8 +67,16 @@ jobs:
         if: github.event_name == 'push'
         run: |
           # Audit the latest commit on main for continuous integrity monitoring
-          git diff HEAD~1 > /tmp/push.diff || true
-          node packages/cli/dist/index.js check \
-            --diff /tmp/push.diff \
-            --base "HEAD~1" \
-            --format github
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            git diff HEAD~1 > /tmp/push.diff || true
+            if [ -s /tmp/push.diff ]; then
+              node packages/cli/dist/index.js check \
+                --diff /tmp/push.diff \
+                --base "HEAD~1" \
+                --format github
+            else
+              echo "No diff between HEAD and HEAD~1 to audit."
+            fi
+          else
+            echo "Initial commit: skipping push diff audit."
+          fi
