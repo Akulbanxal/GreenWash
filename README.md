@@ -1,8 +1,29 @@
 # Greenwash
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](file:///Users/akul/Desktop/GreenWash/LICENSE)
+[![DigitalOcean App Platform](https://img.shields.io/badge/DigitalOcean-App_Platform_Ready-blue.svg?logo=digitalocean)](file:///Users/akul/Desktop/GreenWash/.do/app.yaml)
+[![Open-Weight AI: Gemma 2B](https://img.shields.io/badge/Open--Weight_AI-Gemma_2B%2F7B-purple.svg)](file:///Users/akul/Desktop/GreenWash/docs/open-source-ai.md)
+[![Agent Skill](https://img.shields.io/badge/Agent_Skill-greenwash-indigo.svg)](file:///Users/akul/Desktop/GreenWash/skills/greenwash/SKILL.md)
+[![Tests Passing](https://img.shields.io/badge/Tests-214_passed-success.svg)](file:///Users/akul/Desktop/GreenWash/packages/)
+[![Live Demo](https://img.shields.io/badge/Live_Domain-banxal.tech-cyan.svg)](https://banxal.tech)
+
 > **Greenwash catches when an AI coding agent makes tests green by weakening the tests instead of fixing the bug—and shows the exact diff and reproducible evidence.**
 
-Autonomous coding agents often "fix" failing builds by softening assertions (e.g. changing `expect(x).toBe(900)` to `expect(x).toBeGreaterThanOrEqual(0)`), deleting difficult test cases, or stubbing them with mocks. Greenwash pairs deterministic AST diff inspection with independently approved behavioral contracts and reproducible replays.
+Autonomous coding agents often "fix" failing builds by softening assertions (e.g. changing `expect(x).toBe(900)` to `expect(x).toBeGreaterThanOrEqual(0)`), deleting difficult test cases, or stubbing them with mocks. Greenwash pairs deterministic AST diff inspection with independently approved behavioral contracts, open-weight Gemma semantic review, and reproducible replays.
+
+---
+
+## 🌊 DigitalOcean: Best Open-Source AI Project
+
+GreenWash fully satisfies all three criteria of the **DigitalOcean: Best Open-Source AI Project** track:
+
+1. **Open-Weight AI (Gemma 2B & 7B):** 100% local, self-hosted semantic risk analysis via Ollama/vLLM with zero cloud API keys, zero token fees, and zero code egress. See [`docs/open-source-ai.md`](file:///Users/akul/Desktop/GreenWash/docs/open-source-ai.md).
+2. **Autonomous Agent Skill:** Native [`skills/greenwash/SKILL.md`](file:///Users/akul/Desktop/GreenWash/skills/greenwash/SKILL.md) empowering Claude Code, Cursor, GitHub Copilot, and Antigravity to self-audit their git diffs and prevent test-weakening before PRs.
+3. **Open-Source Model Harness & Graphify:** 6-stage typed Mastra workflow orchestration paired with an 803-node AST knowledge graph mapping the downstream architectural blast radius of every code change.
+4. **DigitalOcean 1-Click Deploy:** Ready for instantaneous deployment on DigitalOcean App Platform via [`.do/app.yaml`](file:///Users/akul/Desktop/GreenWash/.do/app.yaml) or single-droplet Docker Compose.
+
+[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Akulbanxal/GreenWash)
+
 
 ---
 
@@ -170,11 +191,15 @@ npm test apps/web/test/
 
 | Competition Track | Module / Location | Status | Implementation Details |
 |:---|:---|:---:|:---|
+| **DigitalOcean: Best Open-Source AI Project** | [`.do/app.yaml`](file:///Users/akul/Desktop/GreenWash/.do/app.yaml), [`skills/greenwash/`](file:///Users/akul/Desktop/GreenWash/skills/greenwash/), [`docs/open-source-ai.md`](file:///Users/akul/Desktop/GreenWash/docs/open-source-ai.md) | Verified Live | MIT-licensed open-source AI project using open-weight Gemma 2B/7B, native agent skill for coding assistants, 6-stage Mastra workflow harness, and 1-click DigitalOcean App Platform spec. |
 | **Best Use of Gemma** ($200) | [`packages/core/src/gemma/`](file:///packages/core/src/gemma/) | Verified Live | Local Ollama endpoint (`http://localhost:11434`), structured schema review, zero secret leakage, strictly advisory (never overrides deterministic rules). |
 | **Best Use of Mastra** ($100) | [`packages/core/src/mastra/`](file:///packages/core/src/mastra/) | Active | 6-stage typed audit workflow pipeline orchestrating AST diff checks, behavior replay, Gemma advisory, and verdict calculation. |
 | **Best Use of Entire** ($100) | [`packages/core/src/provenance/`](file:///packages/core/src/provenance/) | Verified Live | Real-time session watcher and parser for Entire CLI agent provenance trails with automatic secret redaction engine (`[REDACTED_SECRET]`) and suspicious sequence detection. |
 | **Best Use of Sentry Agent Tracing** ($100) | [`packages/core/src/sentry/`](file:///packages/core/src/sentry/) | Verified Live | OpenTelemetry / Sentry distributed agent tracing with child spans for every audit step, live verification probe, and sanitized payloads. |
 | **Best Use of MongoDB Atlas** ($100) | [`packages/core/src/persistence/`](file:///packages/core/src/persistence/) | Verified Live | Dual-mode audit history repository supporting MongoDB Atlas with live canary write/read probe (14ms latency) and transparent in-memory local fallback. |
+| **Best Use of Render** | [`render.yaml`](file:///Users/akul/Desktop/GreenWash/render.yaml), [`Dockerfile`](file:///Users/akul/Desktop/GreenWash/Dockerfile) | Live on Render | Unified single-port deployment on Render Free Tier serving Express API + static Vite bundle with automated continuous deployment. |
+| **Best Use of a .tech Domain** | [`https://banxal.tech`](https://banxal.tech) | Live Domain | Custom `.tech` domain connected via DNS CNAME records to Render production deployment with automated SSL/TLS encryption. |
+| **Graphify Knowledge Graph Integration** | [`packages/core/src/graphify/`](file:///packages/core/src/graphify/), [`apps/web/src/components/GraphifyVisualizer.tsx`](file:///apps/web/src/components/GraphifyVisualizer.tsx) | Live Integration | 803-node, 1,876-edge, 39-community interactive vis-network constellation graph and forensic blast-radius DAG visualizer. |
 
 ---
 

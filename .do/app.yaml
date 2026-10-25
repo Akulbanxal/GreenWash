@@ -1,0 +1,33 @@
+name: greenwash
+region: nyc
+services:
+  - name: greenwash-web
+    dockerfilePath: Dockerfile
+    source_dir: /
+    http_port: 3001
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3001"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: MONGODB_URI
+        value: "mongodb://127.0.0.1:27017/greenwash"
+      - key: SENTRY_ENVIRONMENT
+        value: "digitalocean-production"
+      - key: GEMMA_MODEL
+        value: "gemma:2b"
+      - key: GEMMA_ENDPOINT
+        value: ""
+    health_check:
+      http_path: /api/health
+      initial_delay_seconds: 15
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      error_threshold: 3
