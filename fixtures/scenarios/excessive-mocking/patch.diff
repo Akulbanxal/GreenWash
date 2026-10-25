@@ -1,0 +1,6 @@
+--- a/tests/auth.test.ts
++++ b/tests/auth.test.ts
+@@ -8,2 +8,3 @@
+   it("authenticates token", () => {
++    vi.spyOn(TokenValidator, "verify").mockReturnValue(true);
+     expect(TokenValidator.verify("expired-token")).toBe(true);

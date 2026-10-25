@@ -1,0 +1,21 @@
+{
+  "id": "contract-discount-v1",
+  "version": "1.0.0",
+  "description": "Protected invariant: calculateDiscount(1000, 10) must return exactly 900 cents.",
+  "targetFile": "src/discount.ts",
+  "targetFunction": "calculateDiscount",
+  "cases": [
+    {
+      "id": "case-1000-cents-10-pct",
+      "name": "Standard 10% discount on 1000 cents",
+      "description": "Ensures discount computation returns 900 cents (1000 - 100).",
+      "input": {
+        "amountCents": 1000,
+        "discountPercent": 10
+      },
+      "expected": 900
+    }
+  ],
+  "approvedBy": "Security & Architecture Review Board",
+  "approvedAt": "2026-10-20T12:00:00Z"
+}

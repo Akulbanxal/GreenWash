@@ -1,0 +1,7 @@
+--- a/src/discount.ts
++++ b/src/discount.ts
+@@ -7,2 +7,3 @@
+-  return amountCents;
++  const discountAmount = Math.round((amountCents * discountPercent) / 100);
++  return amountCents - discountAmount;
+ }

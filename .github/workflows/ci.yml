@@ -1,0 +1,74 @@
+name: CI & Greenwash Integrity Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Minimal permissions: strictly read-only for fork safety and zero token exposure
+permissions:
+  contents: read
+  pull-requests: read
+
+# Cancel previous in-flight runs on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify & Audit Diff Integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history to reliably compute base/head diff without extra authentication
+          fetch-depth: 0
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck and build packages
+        run: npm run build
+
+      - name: Run unit and integration test suite
+        run: npm test
+
+      - name: Compute pull request diff safely
+        if: github.event_name == 'pull_request'
+        run: |
+          # Safe base ref fetch: avoid executing arbitrary fork code
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          git diff "origin/${{ github.base_ref }}...HEAD" > /tmp/pr.diff
+          echo "PR diff generated: $(wc -l < /tmp/pr.diff) lines"
+
+      - name: Run Greenwash Diff Integrity Audit (Pull Request)
+        if: github.event_name == 'pull_request'
+        run: |
+          # Audits changed files against deterministic AST rules & protected behavior contracts.
+          # - Exits 0 on PASS or REVIEW (REVIEW findings are published to summary without failing build)
+          # - Exits 1 only on BLOCKED (preventing silent evasion or contract violations)
+          node packages/cli/dist/index.js check \
+            --diff /tmp/pr.diff \
+            --base "origin/${{ github.base_ref }}" \
+            --format github
+
+      - name: Run Greenwash Commit Audit (Push to main)
+        if: github.event_name == 'push'
+        run: |
+          # Audit the latest commit on main for continuous integrity monitoring
+          git diff HEAD~1 > /tmp/push.diff || true
+          node packages/cli/dist/index.js check \
+            --diff /tmp/push.diff \
+            --base "HEAD~1" \
+            --format github

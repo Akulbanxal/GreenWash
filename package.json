@@ -1,0 +1,27 @@
+{
+  "name": "greenwash",
+  "version": "0.1.0",
+  "description": "Evidence-first integrity auditor for AI-generated code changes",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "start": "node apps/api/dist/server.js",
+    "build:core": "npm run build --workspace=@greenwash/core",
+    "build": "npm run build:core && npm run build --workspace=@greenwash/cli && npm run build --workspace=@greenwash/api && npm run build --workspace=@greenwash/web",
+    "test": "vitest run",
+    "typecheck": "npm run build:core && npm run typecheck --workspaces",
+    "greenwash": "npm run start --workspace=@greenwash/cli --"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.9",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.3"
+  },
+  "dependencies": {
+    "@mastra/core": "^1.79.0"
+  }
+}

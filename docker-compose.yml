@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  greenwash:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: greenwash-app
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - GEMMA_ENDPOINT=http://ollama:11434
+      - GEMMA_MODEL=gemma:2b
+      - MONGODB_URI=mongodb://mongodb:27017/greenwash
+      - MONGODB_DATABASE=greenwash
+      - MONGODB_COLLECTION=audit_history
+      - ENTIRE_SESSION_PATH=fixtures/sessions/sanitized-sample-session.json
+      # Optional: set SENTRY_DSN here if using Sentry
+      # - SENTRY_DSN=https://<publicKey>@<host>/<projectId>
+    depends_on:
+      - mongodb
+    networks:
+      - greenwash-net
+
+  mongodb:
+    image: mongo:7-jammy
+    container_name: greenwash-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - greenwash-net
+
+volumes:
+  mongo-data:
+
+networks:
+  greenwash-net:
+    driver: bridge

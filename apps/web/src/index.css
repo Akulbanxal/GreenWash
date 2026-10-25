@@ -1,0 +1,364 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base App Canvas */
+    --app-bg: #F4F7FB;
+
+    /* Surfaces (Light Mode) */
+    --color-surface-base: transparent;   /* Exposes ambient forensic canvas */
+    --color-surface-panel: #FFFFFF;      /* Clean crisp panel white */
+    --color-surface-subtle: #F8FAFD;     /* Subtle item fill */
+    --color-surface-raised: #EDF2F8;     /* Raised container fill */
+    --color-surface-code: #0F172A;       /* Code editor canvas */
+    --color-surface-terminal: #161F30;   /* Interactive terminal boxes */
+
+    /* Borders & Dividers */
+    --color-border-subtle: #EBF0F7;
+    --color-border-default: #D9E1EC;     /* Standard panel dividers */
+    --color-border-strong: #BAC7D5;      /* Active selection borders */
+    --color-border-dark: #2A3342;        /* Dark code borders */
+
+    /* Typography */
+    --color-text-primary: #172033;       /* High-contrast headings and body */
+    --color-text-secondary: #536176;     /* Captions and secondary labels */
+    --color-text-tertiary: #8C9BAE;      /* Inactive icons and disabled text */
+    --color-text-code: #E2E8F0;          /* Default syntax text */
+    --color-text-code-muted: #64748B;    /* Line numbers and comments */
+
+    /* Semantic Status Tokens (Light Mode) */
+    --color-status-pass-bg: #ECFDF5;
+    --color-status-pass-text: #087F5B;
+    --color-status-pass-border: #A7F3D0;
+    --color-status-pass-solid: #087F5B;
+
+    --color-status-review-bg: #FFFBEB;
+    --color-status-review-text: #946200;
+    --color-status-review-border: #FDE68A;
+    --color-status-review-solid: #B45309;
+
+    --color-status-blocked-bg: #FEF2F2;
+    --color-status-blocked-text: #C93643;
+    --color-status-blocked-border: #FECACA;
+    --color-status-blocked-solid: #C93643;
+
+    /* Accents (Light Mode) */
+    --color-brand-primary: #087F5B;      /* Emerald forensic primary */
+    --color-brand-secondary: #245FC7;    /* Cobalt forensic secondary */
+    --color-accent-gemma: #0284C7;       /* Open-weight Gemma indicator */
+    --color-accent-entire: #6366F1;      /* Entire provenance indicator */
+    --color-accent-sentry: #7C3AED;      /* Sentry tracing indicator */
+
+    /* Motion Tokens */
+    --duration-fast: 120ms;
+    --duration-normal: 180ms;
+    --duration-expansion: 240ms;
+    --duration-highlight: 600ms;
+    --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dark {
+    /* Base App Canvas */
+    --app-bg: #090D14;
+
+    /* Surfaces (Dark Mode - Forensic Suite) */
+    --color-surface-base: transparent;
+    --color-surface-panel: #0E1420;      /* Primary dark surface */
+    --color-surface-subtle: #131C2A;     /* Elevated surface */
+    --color-surface-raised: #192536;     /* Raised panels */
+    --color-surface-code: #070A0F;       /* Deep obsidian code canvas */
+    --color-surface-terminal: #0A0F18;   /* Terminal canvas */
+
+    /* Borders & Dividers */
+    --color-border-subtle: #141E2D;
+    --color-border-default: #1E293B;     /* Blue-gray contrast border */
+    --color-border-strong: #2D3F59;      /* Focused / selected border */
+    --color-border-dark: #1E293B;
+
+    /* Typography */
+    --color-text-primary: #E8EEF7;       /* High-contrast crisp white-blue */
+    --color-text-secondary: #A0AEC0;     /* Forensic slate secondary */
+    --color-text-tertiary: #64748B;      /* Muted tertiary */
+    --color-text-code: #E2E8F0;
+    --color-text-code-muted: #64748B;
+
+    /* Semantic Status Tokens (Dark Mode) */
+    --color-status-pass-bg: rgba(100, 230, 181, 0.12);
+    --color-status-pass-text: #64E6B5;
+    --color-status-pass-border: rgba(100, 230, 181, 0.35);
+    --color-status-pass-solid: #64E6B5;
+
+    --color-status-review-bg: rgba(244, 198, 106, 0.12);
+    --color-status-review-text: #F4C66A;
+    --color-status-review-border: rgba(244, 198, 106, 0.35);
+    --color-status-review-solid: #F4C66A;
+
+    --color-status-blocked-bg: rgba(255, 107, 117, 0.14);
+    --color-status-blocked-text: #FF6B75;
+    --color-status-blocked-border: rgba(255, 107, 117, 0.35);
+    --color-status-blocked-solid: #FF6B75;
+
+    /* Accents (Dark Mode) */
+    --color-brand-primary: #64E6B5;      /* Luminescent emerald */
+    --color-brand-secondary: #78A9FF;    /* Cyber cobalt */
+    --color-accent-gemma: #38BDF8;       /* Gemma cyan */
+    --color-accent-entire: #818CF8;      /* Entire purple */
+    --color-accent-sentry: #A78BFA;      /* Sentry violet */
+  }
+
+  body {
+    background-color: var(--app-bg);
+    color: var(--color-text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Accessibility contrast guarantee: dark text on luminescent solid buttons & badges in Dark Mode */
+  .dark .bg-brand-primary,
+  .dark .bg-status-pass-solid,
+  .dark .bg-status-review-solid,
+  .dark .bg-status-blocked-solid {
+    color: #090D14 !important;
+  }
+  .dark .bg-brand-primary svg,
+  .dark .bg-status-pass-solid svg,
+  .dark .bg-status-review-solid svg,
+  .dark .bg-status-blocked-solid svg {
+    color: #090D14 !important;
+    stroke: #090D14 !important;
+  }
+  .dark .bg-brand-primary *,
+  .dark .bg-status-pass-solid *,
+  .dark .bg-status-review-solid *,
+  .dark .bg-status-blocked-solid * {
+    color: #090D14 !important;
+  }
+}
+
+/* Custom scrollbars for code diffs and timeline panes */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Keyframes & Motion Classes */
+@keyframes target-hunk-flash {
+  0% {
+    background-color: rgba(210, 153, 34, 0.45);
+    box-shadow: inset 4px 0 0 #D29922;
+  }
+  50% {
+    background-color: rgba(210, 153, 34, 0.35);
+  }
+  100% {
+    background-color: rgba(210, 153, 34, 0.2);
+    box-shadow: inset 4px 0 0 #D29922;
+  }
+}
+
+.animate-target-hunk {
+  animation: target-hunk-flash var(--duration-highlight) var(--ease-standard) forwards;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: page-enter var(--duration-normal) var(--ease-standard) forwards;
+}
+
+@keyframes atmospheric-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 4%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(-2%, 2%, 0) scale(0.97);
+  }
+}
+
+@keyframes wave-flow-slow {
+  0% {
+    transform: translateY(0px) scaleY(1);
+  }
+  50% {
+    transform: translateY(-8px) scaleY(1.03);
+  }
+  100% {
+    transform: translateY(0px) scaleY(1);
+  }
+}
+
+@keyframes wave-flow-reverse {
+  0% {
+    transform: translateY(0px) scaleY(1);
+  }
+  50% {
+    transform: translateY(6px) scaleY(1.02);
+  }
+  100% {
+    transform: translateY(0px) scaleY(1);
+  }
+}
+
+@keyframes cyber-grid-slide {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+@keyframes neon-pulse-soft {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes scanline-pass {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(1000%);
+  }
+}
+
+/* Glassmorphism & Cyber Card Elevation */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 24px -2px rgba(15, 23, 42, 0.05), 0 1px 3px 0 rgba(15, 23, 42, 0.03);
+  transition: border-color var(--duration-normal) var(--ease-standard), box-shadow var(--duration-normal) var(--ease-standard), background var(--duration-normal) var(--ease-standard);
+}
+
+.glass-panel:hover {
+  border-color: rgba(165, 180, 252, 0.6);
+  box-shadow: 0 12px 32px -4px rgba(99, 102, 241, 0.10), 0 2px 6px 0 rgba(15, 23, 42, 0.04);
+}
+
+.dark .glass-panel {
+  background: rgba(14, 20, 32, 0.85);
+  border: 1px solid rgba(30, 41, 59, 0.8);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dark .glass-panel:hover {
+  border-color: rgba(100, 230, 181, 0.4);
+  box-shadow: 0 12px 32px -4px rgba(100, 230, 181, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+.dark-terminal-card {
+  background: #090D16;
+  border: 1px solid #1E293B;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes forensic-scan-beam {
+  0% {
+    top: -10%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 110%;
+    opacity: 0;
+  }
+}
+
+.animate-scan-beam {
+  animation: forensic-scan-beam 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes border-pulse-glow {
+  0%, 100% {
+    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 0 16px -3px rgba(99, 102, 241, 0.12);
+  }
+  50% {
+    border-color: rgba(100, 230, 181, 0.6);
+    box-shadow: 0 0 24px -2px rgba(100, 230, 181, 0.22);
+  }
+}
+
+.animate-border-glow {
+  animation: border-pulse-glow 3.5s ease-in-out infinite;
+}
+
+@keyframes shine-pass {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(220%);
+    opacity: 0;
+  }
+}
+
+.animate-shine {
+  animation: shine-pass 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Accessibility: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .page-transition,
+  .animate-target-hunk {
+    animation: none !important;
+  }
+}
+
