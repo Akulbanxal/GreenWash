@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: greenwash
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: GEMMA_ENDPOINT
+        value: http://localhost:10000/api/gemma/mock
+      - key: GEMMA_MODEL
+        value: gemma:2b
+      - key: ENTIRE_SESSION_PATH
+        value: fixtures/sessions/sanitized-sample-session.json
