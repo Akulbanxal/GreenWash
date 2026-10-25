@@ -45,7 +45,7 @@ export interface DemoAuditApiResponse extends AuditReport {
 
 export async function runDemoAudit(scenarioId: string): Promise<DemoAuditApiResponse> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s client timeout
+  const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s client timeout for cold starts
 
   try {
     const res = await fetch("/api/audits/demo", {
@@ -63,7 +63,7 @@ export async function runDemoAudit(scenarioId: string): Promise<DemoAuditApiResp
     return res.json();
   } catch (err: unknown) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error("Audit request timed out after 10 seconds.");
+      throw new Error("Audit request timed out after 35 seconds. The server was waking up, please retry.");
     }
     throw err;
   } finally {
