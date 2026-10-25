@@ -2,7 +2,7 @@ services:
   - type: web
     name: greenwash
     runtime: docker
-    plan: starter
+    plan: free
     region: oregon
     dockerfilePath: ./Dockerfile
     envVars:
