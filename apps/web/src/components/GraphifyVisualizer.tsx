@@ -14,7 +14,9 @@ import {
   ShieldCheck,
   CheckCircle2,
   FileCode,
-  Terminal,
+  Sparkles,
+  ExternalLink,
+  Compass,
 } from "lucide-react";
 import { GraphifyGraph, GraphifyNode, GraphifyEdge } from "@greenwash/core/dist/browser.js";
 
@@ -32,7 +34,7 @@ const CARD_HEIGHT = 56;
 const HALF_W = CARD_WIDTH / 2;
 const HALF_H = CARD_HEIGHT / 2;
 
-// 4 Architectural Column Centers
+// 4 Architectural Column Centers for Topology mode
 const COL_X = {
   CONTRACTS: 155, // Invariant Behavior Contracts
   CORE: 445,      // Source Modules & Business Functions
@@ -41,6 +43,7 @@ const COL_X = {
 };
 
 export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerProps) {
+  const [viewMode, setViewMode] = useState<"galaxy" | "topology">("galaxy");
   const [graph, setGraph] = useState<GraphifyGraph | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,7 +104,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
       }
     });
 
-    // Helper to distribute Y coordinates cleanly with generous spacing
     const assignY = (nodes: GraphifyNode[], colX: number) => {
       if (nodes.length === 1) {
         pos[nodes[0].id] = { x: colX, y: 310 };
@@ -120,10 +122,7 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
       }
     };
 
-    // Ensure predictable order within columns:
-    // Col 1: SOURCE_MODULE on top, FUNCTION below
     col1.sort((a, b) => (a.type === "SOURCE_MODULE" ? -1 : 1));
-    // Col 2: TEST_SUITE on top, TEST_CASE below
     col2.sort((a, b) => (a.type === "TEST_SUITE" ? -1 : 1));
 
     assignY(col0, COL_X.CONTRACTS);
@@ -193,14 +192,7 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
   };
 
   const downloadJson = () => {
-    if (!graph) return;
-    const blob = new Blob([JSON.stringify(graph, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `graphify-${selectedScenarioId}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    window.open("/graphify.json", "_blank");
   };
 
   const getNodeTheme = (node: GraphifyNode) => {
@@ -259,7 +251,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
         pip: "#3b82f6",
       };
     }
-    // Test Suites & Cases
     return {
       bg: "#14132b",
       border: "#818cf8",
@@ -271,7 +262,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
     };
   };
 
-  // Helper to compute clean non-overlapping edge curves
   const renderEdge = (edge: GraphifyEdge) => {
     const src = positions[edge.source];
     const tgt = positions[edge.target];
@@ -300,7 +290,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
 
     const dx = Math.abs(tgt.x - src.x);
 
-    // Case 1: Same column (Vertical connection e.g. Suite -> Case or Module -> Function)
     if (dx < 40) {
       const isDown = tgt.y > src.y;
       const startY = isDown ? src.y + HALF_H : src.y - HALF_H;
@@ -308,11 +297,8 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
       pathData = `M ${src.x} ${startY} L ${tgt.x} ${endY}`;
       labelX = src.x + 44;
       labelY = (startY + endY) / 2;
-    }
-    // Case 2: Adjacent columns (Left to Right or Right to Left)
-    else if (dx <= 350) {
+    } else if (dx <= 350) {
       if (src.x < tgt.x) {
-        // Going Right: src card right edge -> tgt card left edge
         const startX = src.x + HALF_W;
         const endX = tgt.x - HALF_W;
         const ctrlOffset = (endX - startX) * 0.5;
@@ -320,7 +306,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
         labelX = (startX + endX) / 2;
         labelY = (src.y + tgt.y) / 2;
       } else {
-        // Going Left: src card left edge -> tgt card right edge
         const startX = src.x - HALF_W;
         const endX = tgt.x + HALF_W;
         const ctrlOffset = (startX - endX) * 0.5;
@@ -328,10 +313,7 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
         labelX = (startX + endX) / 2;
         labelY = (src.y + tgt.y) / 2;
       }
-    }
-    // Case 3: Long-distance cross-column connection (e.g. Tampering in Col 3 -> Function in Col 1)
-    // Route gracefully around the bottom or top bypass channel so it NEVER intersects Col 2!
-    else {
+    } else {
       const useTopBypass = src.y < 280 && tgt.y < 280;
       if (useTopBypass) {
         const startY = src.y - HALF_H;
@@ -341,7 +323,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
         labelX = (src.x + tgt.x) / 2;
         labelY = bypassY;
       } else {
-        // Route along bottom bypass
         const startY = src.y + HALF_H;
         const endY = tgt.y + HALF_H;
         const bypassY = 560;
@@ -362,7 +343,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
           markerEnd={markerId}
           opacity={highlightBlastRadius && !isTamperedPath ? 0.35 : 0.85}
         />
-        {/* Sleek edge relation pill */}
         <g transform={`translate(${labelX}, ${labelY})`}>
           <rect
             x="-44"
@@ -399,50 +379,62 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
           <div>
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-                <Share2 className="w-3.5 h-3.5" /> Graphify Knowledge Graph
+                <Share2 className="w-3.5 h-3.5" /> Graphify Official Integration
               </span>
-              <span className="text-xs text-slate-400 font-mono">AST Directed Architecture Network</span>
+              <span className="text-xs text-slate-400 font-mono">vis-network AST Knowledge Graph</span>
             </div>
             <h1 className="text-2xl font-bold text-white mt-1 flex items-center gap-2">
               Architectural Code Graph & Blast-Radius Network
             </h1>
             <p className="text-sm text-slate-300 mt-1 max-w-2xl">
-              Clean 4-column topological graph mapping specifications, core business logic, test assertions, and agent tampering evasions. Drag cards, trace relationship edges, and observe downstream blast-radius cascades.
+              Extracted with Graphify: 803 nodes, 1,876 edges, and 39 Leiden communities across the GreenWash repository. Explore full codebase constellations, search nodes, or inspect the forensic blast-radius DAG.
             </p>
           </div>
 
+          {/* Mode Switcher & Actions */}
           <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setHighlightBlastRadius(!highlightBlastRadius)}
-              className={`px-3 py-2 text-xs font-semibold rounded-lg border flex items-center gap-1.5 transition-colors ${
-                highlightBlastRadius
-                  ? "bg-rose-500/20 border-rose-500/40 text-rose-300 hover:bg-rose-500/30 shadow-sm shadow-rose-900/50"
-                  : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
-              }`}
-            >
-              <Flame className="w-3.5 h-3.5 text-rose-400" />
-              {highlightBlastRadius ? "Blast Radius: ACTIVE" : "Blast Radius: OFF"}
-            </button>
+            {/* View Mode Toggle Buttons */}
+            <div className="bg-slate-950 p-1 rounded-lg border border-slate-800 flex items-center">
+              <button
+                onClick={() => setViewMode("galaxy")}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all ${
+                  viewMode === "galaxy"
+                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-900/50"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Repository Galaxy (803 Nodes)
+              </button>
+              <button
+                onClick={() => setViewMode("topology")}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all ${
+                  viewMode === "topology"
+                    ? "bg-cyan-600 text-white shadow-md shadow-cyan-900/50"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                Forensic Blast Radius (DAG)
+              </button>
+            </div>
 
-            <button
-              onClick={() => {
-                setPositions(initialPositions);
-                setZoom(1);
-                setPan({ x: 0, y: 0 });
-              }}
+            <a
+              href="/graphify.html"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg border border-slate-700 flex items-center gap-1.5 transition-colors"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              Re-Layout
-            </button>
+              <ExternalLink className="w-3.5 h-3.5 text-sky-400" />
+              Open Fullscreen
+            </a>
 
             <button
               onClick={downloadJson}
-              disabled={!graph}
-              className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow flex items-center gap-1.5 transition-colors"
+              className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
-              Export graph.json
+              graph.json
             </button>
           </div>
         </div>
@@ -456,41 +448,76 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
       )}
 
       {/* Summary Metrics */}
-      {graph && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <div className="text-xs text-slate-400 flex items-center gap-1.5">
-              <Box className="w-4 h-4 text-sky-400" /> Total Graph Nodes
-            </div>
-            <div className="text-2xl font-bold text-white mt-1">{graph.summary.totalNodes}</div>
-            <div className="text-xs text-slate-500 mt-0.5">AST components & invariants</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div className="text-xs text-slate-400 flex items-center gap-1.5">
+            <Box className="w-4 h-4 text-sky-400" /> Total Knowledge Graph Nodes
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <div className="text-xs text-slate-400 flex items-center gap-1.5">
-              <Share2 className="w-4 h-4 text-indigo-400" /> Dependency Edges
-            </div>
-            <div className="text-2xl font-bold text-white mt-1">{graph.summary.totalEdges}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Imports, calls & assertions</div>
+          <div className="text-2xl font-bold text-white mt-1">
+            {viewMode === "galaxy" ? "803" : graph ? graph.summary.totalNodes : "803"}
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <div className="text-xs text-slate-400 flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-rose-400" /> Tampered Nodes
-            </div>
-            <div className="text-2xl font-bold text-rose-400 mt-1">{graph.summary.tamperedNodes}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Weakened by AI agent</div>
+          <div className="text-xs text-slate-500 mt-0.5">AST symbols, modules & invariants</div>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div className="text-xs text-slate-400 flex items-center gap-1.5">
+            <Share2 className="w-4 h-4 text-indigo-400" /> Dependency & Call Edges
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <div className="text-xs text-slate-400 flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-emerald-400" /> Blast Radius Count
+          <div className="text-2xl font-bold text-white mt-1">
+            {viewMode === "galaxy" ? "1,876" : graph ? graph.summary.totalEdges : "1,876"}
+          </div>
+          <div className="text-xs text-slate-500 mt-0.5">Extracted calls, imports & assertions</div>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div className="text-xs text-slate-400 flex items-center gap-1.5">
+            <Compass className="w-4 h-4 text-emerald-400" /> Leiden Communities
+          </div>
+          <div className="text-2xl font-bold text-emerald-400 mt-1">39</div>
+          <div className="text-xs text-slate-500 mt-0.5">Algorithmic architectural clusters</div>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div className="text-xs text-slate-400 flex items-center gap-1.5">
+            <Flame className="w-4 h-4 text-rose-400" /> Tampered Invariants
+          </div>
+          <div className="text-2xl font-bold text-rose-400 mt-1">
+            {graph ? graph.summary.tamperedNodes : 2}
+          </div>
+          <div className="text-xs text-slate-500 mt-0.5">Weakened assertions detected</div>
+        </div>
+      </div>
+
+      {/* VIEW 1: FULL OFFICIAL GRAPHIFY GALAXY VISUALIZER (vis-network Physics Engine) */}
+      {viewMode === "galaxy" && (
+        <div className="bg-slate-950 border border-slate-800 rounded-xl shadow-2xl overflow-hidden relative">
+          <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between text-xs flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="font-semibold text-slate-200">Interactive Graphify Force-Directed Galaxy Engine</span>
+              <span className="text-slate-500 font-mono text-[11px]">
+                (vis-network physics · search nodes · filter communities · inspect degrees)
+              </span>
             </div>
-            <div className="text-2xl font-bold text-emerald-400 mt-1">{graph.summary.blastRadiusCount}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Cascading compromised assets</div>
+            <div className="flex items-center gap-3 text-slate-400 text-[11px] font-mono">
+              <span>Drag canvas or nodes</span>
+              <span>•</span>
+              <span>Scroll to zoom</span>
+              <span>•</span>
+              <span>Click node for inspector</span>
+            </div>
+          </div>
+
+          {/* Embedded Official Graphify Vis-Network HTML */}
+          <div className="w-full h-[760px] relative bg-[#0f0f1a]">
+            <iframe
+              src="/graphify.html"
+              title="Official Graphify Knowledge Graph"
+              className="w-full h-full border-none"
+            />
           </div>
         </div>
       )}
 
-      {/* Visual Topological Graph Canvas */}
-      {graph && (
+      {/* VIEW 2: FORENSIC BLAST-RADIUS TOPOLOGY DAG */}
+      {viewMode === "topology" && graph && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl relative overflow-hidden flex flex-col min-h-[620px]">
             {/* 4 Architectural Zone Column Headers */}
@@ -548,7 +575,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
               onMouseUp={handleMouseUp}
               style={{ minHeight: "560px" }}
             >
-              {/* Arrow Markers */}
               <defs>
                 <marker
                   id="arrow-normal"
@@ -586,21 +612,17 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
               </defs>
 
               <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-                {/* Background Subtle Dot Grid */}
                 <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
                   <circle cx="2" cy="2" r="0.75" fill="#1e293b" />
                 </pattern>
                 <rect x="-1000" y="-1000" width="3500" height="3000" fill="url(#grid)" />
 
-                {/* Column Visual Dividers */}
                 <line x1="300" y1="0" x2="300" y2="620" stroke="#1e293b" strokeDasharray="4,4" strokeWidth="1" />
                 <line x1="590" y1="0" x2="590" y2="620" stroke="#1e293b" strokeDasharray="4,4" strokeWidth="1" />
                 <line x1="880" y1="0" x2="880" y2="620" stroke="#1e293b" strokeDasharray="4,4" strokeWidth="1" />
 
-                {/* Edges with Intelligent Curvature & Bypass Routing */}
                 {graph.edges.map(renderEdge)}
 
-                {/* Nodes as Sleek Architectural Cards with ZERO Overlap */}
                 {graph.nodes.map((node) => {
                   const pos = positions[node.id];
                   if (!pos) return null;
@@ -626,7 +648,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
                         setDraggedNodeId(node.id);
                       }}
                     >
-                      {/* Tampering Ripple Pulse Glow */}
                       {node.status === "tampered" && (
                         <rect
                           x="-4"
@@ -641,7 +662,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
                         />
                       )}
 
-                      {/* Main Card Container */}
                       <rect
                         width={CARD_WIDTH}
                         height={CARD_HEIGHT}
@@ -653,7 +673,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
                         opacity={highlightBlastRadius && !isBlast ? 0.35 : 1}
                       />
 
-                      {/* Left Accent Color Stripe */}
                       <rect
                         x="0"
                         y="0"
@@ -664,7 +683,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
                         opacity={highlightBlastRadius && !isBlast ? 0.4 : 1}
                       />
 
-                      {/* Card Type Badge (Dot + Tag) */}
                       <circle cx="16" cy="16" r="3.5" fill={theme.pip} />
                       <text
                         x="24"
@@ -679,7 +697,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
                         {node.type.replace("_", " ")}
                       </text>
 
-                      {/* Status Tag Pill in Card Top-Right */}
                       <rect
                         x={CARD_WIDTH - 58}
                         y="8"
@@ -703,7 +720,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
                         {node.status.toUpperCase()}
                       </text>
 
-                      {/* Node Name Title */}
                       <text
                         x="14"
                         y="41"
@@ -745,7 +761,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
 
           {/* Right Pane: Selected Node Inspector & Blast Details */}
           <div className="space-y-6">
-            {/* Selected Node Details */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
               <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
                 <Box className="w-4 h-4 text-sky-400" />
@@ -801,7 +816,6 @@ export function GraphifyVisualizer({ selectedScenarioId }: GraphifyVisualizerPro
               )}
             </div>
 
-            {/* Blast-Radius Card */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
               <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
                 <Flame className="w-4 h-4 text-rose-400" />

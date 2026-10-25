@@ -5,3 +5,6 @@ dist
 *.log
 coverage
 .DS_Store
+graphify-out/cache
+graphify-out/.*
+

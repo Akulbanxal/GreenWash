@@ -595,6 +595,24 @@ export function createApp(): Express {
   });
 
   /**
+   * GET /graphify.html or /graph.html or /api/graphify-html
+   * Returns the official interactive Graphify knowledge graph (vis-network with 803 nodes, 1876 edges, 39 communities).
+   */
+  app.get(["/graphify.html", "/graph.html", "/api/graphify-html"], (_req: Request, res: Response) => {
+    const candidates = [
+      path.resolve(process.cwd(), "apps/web/dist/graphify.html"),
+      path.resolve(process.cwd(), "apps/web/public/graphify.html"),
+      path.resolve(process.cwd(), "graphify-out/graph.html"),
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        return res.sendFile(p);
+      }
+    }
+    res.status(404).send("graphify.html not found");
+  });
+
+  /**
    * GET /api/gemma/mock
    * Health ping for local development mock endpoint.
    */
