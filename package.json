@@ -8,7 +8,7 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=apps/web",
+    "dev": "node apps/api/dist/server.js & npm run dev --workspace=apps/web",
     "start": "node apps/api/dist/server.js",
     "build:core": "npm run build --workspace=@greenwash/core",
     "build": "npm run build:core && npm run build --workspace=@greenwash/cli && npm run build --workspace=@greenwash/api && npm run build --workspace=@greenwash/web",
