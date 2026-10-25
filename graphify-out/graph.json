@@ -1,0 +1,172 @@
+{
+  "scenarioId": "weakened-assertion",
+  "generatedAt": "2026-10-25T07:37:24.065Z",
+  "nodes": [
+    {
+      "id": "source:weakened-assertion",
+      "name": "weakened-assertion.ts",
+      "type": "SOURCE_MODULE",
+      "filePath": "src/weakened-assertion.ts",
+      "community": "core-domain",
+      "status": "tampered"
+    },
+    {
+      "id": "fn:calculateDiscount",
+      "name": "calculateDiscount(amount, percent)",
+      "type": "FUNCTION",
+      "filePath": "src/weakened-assertion.ts",
+      "lineStart": 1,
+      "lineEnd": 15,
+      "community": "billing-community",
+      "status": "violated",
+      "metadata": {
+        "expectedReturn": 900,
+        "actualReturn": 1000
+      }
+    },
+    {
+      "id": "suite:weakened-assertion.test",
+      "name": "weakened-assertion.test.ts",
+      "type": "TEST_SUITE",
+      "filePath": "tests/weakened-assertion.test.ts",
+      "community": "quality-assurance",
+      "status": "tampered"
+    },
+    {
+      "id": "case:discount-calculation-test",
+      "name": "should calculate 10% discount on 1000 cents",
+      "type": "TEST_CASE",
+      "filePath": "tests/weakened-assertion.test.ts",
+      "lineStart": 5,
+      "lineEnd": 12,
+      "community": "quality-assurance",
+      "status": "tampered",
+      "metadata": {
+        "assertion": "toBeGreaterThanOrEqual(0)"
+      }
+    },
+    {
+      "id": "contract:billing-discount-v1",
+      "name": "Invariant Contract: billing-discount-v1",
+      "type": "BEHAVIOR_CONTRACT",
+      "filePath": "fixtures/contracts/billing-discount.contract.json",
+      "community": "security-council",
+      "status": "violated",
+      "metadata": {
+        "immutable": true,
+        "expectedResult": 900
+      }
+    },
+    {
+      "id": "finding:AST-ASSERT-WEAKENED-0",
+      "name": "AST-ASSERT-WEAKENED (critical)",
+      "type": "AGENT_SESSION",
+      "filePath": "tests/discount.test.ts",
+      "lineStart": 7,
+      "lineEnd": 7,
+      "community": "agent-tampering",
+      "status": "tampered",
+      "metadata": {
+        "title": "Weakened Test Assertion",
+        "description": "Exact equality check was replaced with relational inequality >= 0.",
+        "reproductionCommand": "npx vitest run tests/discount.test.ts"
+      }
+    },
+    {
+      "id": "finding:CONTRACT-VIOLATION-1",
+      "name": "CONTRACT-VIOLATION (critical)",
+      "type": "AGENT_SESSION",
+      "filePath": "src/discount.ts",
+      "community": "agent-tampering",
+      "status": "tampered",
+      "metadata": {
+        "title": "Protected Behavior Invariant Violated",
+        "description": "Function 'calculateDiscount' in src/discount.ts returned 1000 instead of approved 900.",
+        "reproductionCommand": "npm run greenwash -- demo --scenario weakened-assertion"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge:source:weakened-assertion->fn:calculateDiscount",
+      "source": "source:weakened-assertion",
+      "target": "fn:calculateDiscount",
+      "relation": "DECLARES",
+      "label": "exports function"
+    },
+    {
+      "id": "edge:suite:weakened-assertion.test->case:discount-calculation-test",
+      "source": "suite:weakened-assertion.test",
+      "target": "case:discount-calculation-test",
+      "relation": "DECLARES",
+      "label": "defines test"
+    },
+    {
+      "id": "edge:case:discount-calculation-test->fn:calculateDiscount",
+      "source": "case:discount-calculation-test",
+      "target": "fn:calculateDiscount",
+      "relation": "TESTS",
+      "label": "verifies output"
+    },
+    {
+      "id": "edge:contract:billing-discount-v1->fn:calculateDiscount",
+      "source": "contract:billing-discount-v1",
+      "target": "fn:calculateDiscount",
+      "relation": "VERIFIES_INVARIANT",
+      "label": "enforces [1000, 10] === 900"
+    },
+    {
+      "id": "edge:finding:AST-ASSERT-WEAKENED-0->case:discount-calculation-test",
+      "source": "finding:AST-ASSERT-WEAKENED-0",
+      "target": "case:discount-calculation-test",
+      "relation": "TAMPERED_BY",
+      "label": "AST-ASSERT-WEAKENED"
+    },
+    {
+      "id": "edge:finding:AST-ASSERT-WEAKENED-0->fn:calculateDiscount",
+      "source": "finding:AST-ASSERT-WEAKENED-0",
+      "target": "fn:calculateDiscount",
+      "relation": "DEPENDS_ON",
+      "label": "compromises logic"
+    },
+    {
+      "id": "edge:finding:CONTRACT-VIOLATION-1->case:discount-calculation-test",
+      "source": "finding:CONTRACT-VIOLATION-1",
+      "target": "case:discount-calculation-test",
+      "relation": "TAMPERED_BY",
+      "label": "CONTRACT-VIOLATION"
+    },
+    {
+      "id": "edge:finding:CONTRACT-VIOLATION-1->fn:calculateDiscount",
+      "source": "finding:CONTRACT-VIOLATION-1",
+      "target": "fn:calculateDiscount",
+      "relation": "DEPENDS_ON",
+      "label": "compromises logic"
+    }
+  ],
+  "summary": {
+    "totalNodes": 7,
+    "totalEdges": 8,
+    "tamperedNodes": 2,
+    "communities": [
+      "core-domain",
+      "billing-community",
+      "quality-assurance",
+      "security-council",
+      "agent-tampering"
+    ],
+    "blastRadiusCount": 3
+  },
+  "blastRadius": {
+    "sourceTamperingId": "AST-ASSERT-WEAKENED",
+    "affectedFunctions": [
+      "fn:calculateDiscount"
+    ],
+    "affectedContracts": [
+      "contract:billing-discount-v1"
+    ],
+    "affectedSuites": [
+      "suite:weakened-assertion.test"
+    ]
+  }
+}

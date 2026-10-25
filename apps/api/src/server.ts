@@ -20,6 +20,7 @@ import {
   initSentry,
   setGlobalAuditRepository,
   MongoAuditRepository,
+  globalGraphifyEngine,
 } from "@greenwash/core";
 
 function loadEnvSafe() {
@@ -573,6 +574,24 @@ export function createApp(): Express {
     res.setHeader("Content-Disposition", 'attachment; filename="GREENWASH_FULL_FEATURE_REPORT.md"');
     const content = fs.readFileSync(reportPath, "utf-8");
     res.send(content);
+  });
+
+  /**
+   * GET /api/graphify/:scenarioId?
+   * Generates or retrieves the Graphify architectural knowledge graph and blast-radius analysis.
+   */
+  app.get("/api/graphify/:scenarioId?", async (req: Request, res: Response) => {
+    const scenarioId = req.params.scenarioId || "weakened-assertion";
+    try {
+      const auditResult = await globalEngine.auditDemoScenario(scenarioId);
+      const graph = globalGraphifyEngine.generateScenarioGraph(scenarioId, auditResult);
+      // Automatically export artifacts to graphify-out
+      globalGraphifyEngine.exportGraphifyArtifacts(graph);
+      res.json(graph);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      res.status(500).json({ error: msg });
+    }
   });
 
   /**

@@ -9,6 +9,7 @@ export * from "./mastra/index.js";
 export * from "./sentry/index.js";
 export * from "./persistence/index.js";
 export * from "./contracts/synthesizer.js";
+export * from "./graphify/index.js";
 export * from "./engine.js";
 
 export const CORE_VERSION = "0.1.0";

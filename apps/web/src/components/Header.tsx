@@ -13,7 +13,8 @@ export type ScreenTab =
   | "contracts"
   | "timeline"
   | "history"
-  | "integrations";
+  | "integrations"
+  | "graphify";
 
 interface HeaderProps {
   activeScreen: ScreenTab;
@@ -37,6 +38,7 @@ const PRIMARY_NAV_TABS: Array<{ tab: ScreenTab; label: string }> = [
 
 const DIAGNOSTIC_NAV_TABS: Array<{ tab: ScreenTab; label: string }> = [
   { tab: "pipeline", label: "Pipeline" },
+  { tab: "graphify", label: "Graphify" },
   { tab: "timeline", label: "Timeline" },
   { tab: "integrations", label: "Integrations" },
 ];

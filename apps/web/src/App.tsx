@@ -9,6 +9,7 @@ import { AuditHistoryView } from "./components/HistoryView";
 import { IntegrationsView } from "./components/IntegrationsView";
 import { StatusBar } from "./components/StatusBar";
 import { DemoLab, AuditExecutionState, AuditStageProgress } from "./components/DemoLab";
+import { GraphifyVisualizer } from "./components/GraphifyVisualizer";
 import { AmbientSignalBackground } from "./components/AmbientSignalBackground";
 import {
   AuditWorkflowDetailsPanel,
@@ -114,6 +115,7 @@ function AppContent() {
         "timeline",
         "history",
         "integrations",
+        "graphify",
       ];
       if (validScreens.includes(hash as ScreenTab)) {
         return hash as ScreenTab;
@@ -494,6 +496,8 @@ function AppContent() {
                     setActiveScreen("workbench");
                   }}
                 />
+              ) : activeScreen === "graphify" ? (
+                <GraphifyVisualizer selectedScenarioId={selectedScenarioId} />
               ) : activeScreen === "history" ? (
                 <AuditHistoryView />
               ) : (

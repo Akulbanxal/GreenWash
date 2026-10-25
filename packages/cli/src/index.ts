@@ -12,6 +12,7 @@ import {
   MongoAuditRepository,
   BehaviorContractSynthesizer,
   EntireSessionWatcher,
+  globalGraphifyEngine,
 } from "@greenwash/core";
 
 function loadEnvSafe() {
@@ -495,6 +496,34 @@ export function createCli(): Command {
         }
       } catch (err: unknown) {
         console.error(`Error streaming provenance: ${err instanceof Error ? err.message : String(err)}`);
+        process.exitCode = 1;
+      }
+    });
+
+  // 6. graphify command
+  program
+    .command("graphify")
+    .description("Generate Graphify code knowledge graph & blast-radius analysis")
+    .option("-s, --scenario <scenarioId>", "Scenario ID to generate knowledge graph for", "weakened-assertion")
+    .option("-o, --output <dir>", "Output directory for graph.json and GRAPH_REPORT.md", "graphify-out")
+    .action(async (options) => {
+      try {
+        console.log(`Generating Graphify knowledge graph for scenario: ${options.scenario}...`);
+        const audit = await globalEngine.auditDemoScenario(options.scenario);
+        const graph = globalGraphifyEngine.generateScenarioGraph(options.scenario, audit);
+        const { jsonPath, reportPath } = globalGraphifyEngine.exportGraphifyArtifacts(graph, options.output);
+
+        console.log(`\n=======================================================`);
+        console.log(`GRAPHIFY CODEBASE KNOWLEDGE GRAPH`);
+        console.log(`-------------------------------------------------------`);
+        console.log(`Total Nodes:       ${graph.summary.totalNodes}`);
+        console.log(`Total Edges:       ${graph.summary.totalEdges}`);
+        console.log(`Tampered Nodes:    ${graph.summary.tamperedNodes}`);
+        console.log(`Blast Radius:      ${graph.summary.blastRadiusCount} affected components`);
+        console.log(`Artifacts:         ${jsonPath}, ${reportPath}`);
+        console.log(`=======================================================\n`);
+      } catch (err: unknown) {
+        console.error(`Graphify error: ${err instanceof Error ? err.message : String(err)}`);
         process.exitCode = 1;
       }
     });
